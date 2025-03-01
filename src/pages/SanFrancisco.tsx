@@ -2,19 +2,6 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { fetchWeatherApi } from "openmeteo";
 
-
-// const tempSlider = document.createElement("input");
-// tempSlider.type = "range";
-// tempSlider.min = '1950';
-// tempSlider.max = '2050';
-// tempSlider.value = '50';
-// tempSlider.className = "slider";
-// document.body.appendChild(tempSlider);
-//
-// let sliderValue = document.createElement('div');
-// sliderValue.innerHTML = tempSlider.value;
-// document.body.appendChild(sliderValue);
-
 export default function SanFrancisco() {
     // State to hold weather data
     const [weatherData, setWeatherData] = useState(null);
@@ -41,7 +28,9 @@ export default function SanFrancisco() {
                     "MPI_ESM1_2_XR",
                     "NICAM16_8S"
                 ],
-                daily: "temperature_2m_max"
+                temperature_unit: "fahrenheit",
+                precipitation_unit: "inch",
+                daily: ["temperature_2m_max", "precipitation_sum"]
             };
 
             const url = "https://climate-api.open-meteo.com/v1/climate";
@@ -63,7 +52,8 @@ export default function SanFrancisco() {
                             Number(daily.timeEnd()),
                             daily.interval()
                         ).map((t) => new Date((t + utcOffsetSeconds) * 1000)),
-                        temperature2mMax: daily.variables(0)?.valuesArray() || []
+                        temperature2mMax: daily.variables(0)?.valuesArray() || [],
+                        precipitation_sum: daily.variables(1)?.valuesArray() || []
                     }
                 };
 
@@ -88,6 +78,7 @@ export default function SanFrancisco() {
                 yearIndex = weatherData.daily.time.findIndex(date => date.getFullYear() === year);
                 console.log(`Temperature for ${year}: ${weatherData.daily.temperature2mMax[yearIndex]}`);
                 document.getElementById("temperature").innerHTML = String(Math.round(weatherData.daily.temperature2mMax[yearIndex] * 10) / 10);
+                document.getElementById("precipitation").innerHTML = String(weatherData.daily.precipitation_sum[yearIndex]);
             } catch (err) {
                 console.error("Error processing data for selected year:", err);
             }
@@ -97,10 +88,10 @@ export default function SanFrancisco() {
     return (
         <>
             <Head>
-                <title>San Francisco Weather</title>
+                <title>SAN FRANCISCO, CA, USA</title>
             </Head>
             <main>
-                <h1>San Francisco</h1>
+                <h1>SAN FRANCISCO, CA, USA</h1>
 
                 <div>
                     <input
@@ -111,16 +102,22 @@ export default function SanFrancisco() {
                         onChange={handleSliderChange}
                         className="slider"
                     />
-                    <div>Selected Year: {sliderYear}</div>
+                    <div>Current Year: {sliderYear}</div>
                 </div>
 
                 {error && <p style={{color: "red"}}>{error}</p>}
                 {weatherData ? (
                     <div>
                         {weatherData.daily.time.length > 0 ? (
-                            <div id="temperature">
-                                {/*<strong>{weatherData.daily.time[0].toISOString()}</strong>:{" "}*/}
-                                {weatherData.daily.temperature2mMax[yearIndex]}
+                            <div>
+                                <div id="temperature">
+                                    {/*<strong>{weatherData.daily.time[0].toISOString()}</strong>:{" "}*/}
+                                    {weatherData.daily.temperature2mMax[yearIndex]}
+                                </div>
+
+                                <div id="precipitation">
+                                    {weatherData.daily.precipitation_sum[yearIndex]}
+                                </div>
                             </div>
                         ) : (
                             <p>No weather data available</p>
