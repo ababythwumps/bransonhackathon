@@ -2,10 +2,24 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import { fetchWeatherApi } from "openmeteo";
 
+
+// const tempSlider = document.createElement("input");
+// tempSlider.type = "range";
+// tempSlider.min = '1950';
+// tempSlider.max = '2050';
+// tempSlider.value = '50';
+// tempSlider.className = "slider";
+// document.body.appendChild(tempSlider);
+//
+// let sliderValue = document.createElement('div');
+// sliderValue.innerHTML = tempSlider.value;
+// document.body.appendChild(sliderValue);
+
 export default function SanFrancisco() {
     // State to hold weather data
     const [weatherData, setWeatherData] = useState(null);
     const [error, setError] = useState(null);
+    const [sliderYear, setSliderYear] = useState(1950);
 
     // Helper function to create time ranges
     const range = (start, stop, step) =>
@@ -63,8 +77,22 @@ export default function SanFrancisco() {
         fetchData();
     }, []);
 
-    const tempSlider = document.createElement("div");
-    tempSlider.className = "slidecontainer";
+    // Handle slider change
+    let yearIndex = 0
+    const handleSliderChange = (event) => {
+        const year = parseInt(event.target.value);
+        setSliderYear(year);
+
+        if (weatherData) {
+            try {
+                yearIndex = weatherData.daily.time.findIndex(date => date.getFullYear() === year);
+                console.log(`Temperature for ${year}: ${weatherData.daily.temperature2mMax[yearIndex]}`);
+                document.getElementById("temperature").innerHTML = String(Math.round(weatherData.daily.temperature2mMax[yearIndex] * 10) / 10);
+            } catch (err) {
+                console.error("Error processing data for selected year:", err);
+            }
+        }
+    };
 
     return (
         <>
@@ -73,13 +101,26 @@ export default function SanFrancisco() {
             </Head>
             <main>
                 <h1>San Francisco</h1>
+
+                <div>
+                    <input
+                        type="range"
+                        min="1950"
+                        max="2050"
+                        value={sliderYear}
+                        onChange={handleSliderChange}
+                        className="slider"
+                    />
+                    <div>Selected Year: {sliderYear}</div>
+                </div>
+
                 {error && <p style={{color: "red"}}>{error}</p>}
                 {weatherData ? (
                     <div>
                         {weatherData.daily.time.length > 0 ? (
-                            <div>
-                                <strong>{weatherData.daily.time[0].toISOString()}</strong>:{" "}
-                                {weatherData.daily.temperature2mMax[0]}
+                            <div id="temperature">
+                                {/*<strong>{weatherData.daily.time[0].toISOString()}</strong>:{" "}*/}
+                                {weatherData.daily.temperature2mMax[yearIndex]}
                             </div>
                         ) : (
                             <p>No weather data available</p>
