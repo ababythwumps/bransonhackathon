@@ -28,7 +28,7 @@ const Globe = () => {
 
     // Set up scene
     const scene = new Scene();
-    scene.background = new Color('#000000'); // Black background
+    scene.background = new Color('#0a0806'); // Very dark sepia background
     
     // Set up renderer
     const renderer = new WebGLRenderer({ antialias: true, alpha: true });
@@ -40,10 +40,10 @@ const Globe = () => {
     camera.position.z = 250;
     
     // Add lights
-    const ambientLight = new AmbientLight(0xffffff, 0.6);
+    const ambientLight = new AmbientLight(0xf5e8c0, 0.6); // Warm sepia light
     scene.add(ambientLight);
     
-    const directionalLight = new DirectionalLight(0xffffff, 1);
+    const directionalLight = new DirectionalLight(0xf8dfa1, 1); // Warm highlight light
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
     
@@ -52,14 +52,14 @@ const Globe = () => {
       // Use a single solid color for the globe
       .showGlobe(true)
       .showAtmosphere(true)
-      .atmosphereColor('#3a228a')
-      .atmosphereAltitude(0.15)
+      .atmosphereColor('#7a5c28') // Sepia atmosphere
+      .atmosphereAltitude(0.18)
       .globeMaterial(
         // Create a solid color material
         new MeshPhongMaterial({ 
-          color: '#0a3281', // Dark blue
+          color: '#402c12', // Darker sepia for globe
           transparent: true,
-          opacity: 0.95
+          opacity: 0.9
         })
       );
     
@@ -77,8 +77,8 @@ const Globe = () => {
         globe
           .polygonCapColor(() => 'rgba(0, 0, 0, 0)') // Transparent polygon caps
           .polygonSideColor(() => 'rgba(0, 0, 0, 0)') // Transparent polygon sides
-          .polygonStrokeColor(() => '#6dd5ed') // Light blue country outlines
-          .polygonAltitude(0.003); // Slightly raised to ensure visibility
+          .polygonStrokeColor(() => '#d9b382') // Warm sepia country outlines
+          .polygonAltitude(0.005); // Slightly raised to ensure visibility
       });
     
     scene.add(globe);
