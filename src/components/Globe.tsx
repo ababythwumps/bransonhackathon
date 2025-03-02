@@ -28,7 +28,7 @@ const Globe = () => {
 
     // Set up scene
     const scene = new Scene();
-    scene.background = new Color('#0a0806'); // Very dark sepia background
+    scene.background = new Color('#000000'); // Pure black background
     
     // Set up renderer
     const renderer = new WebGLRenderer({ antialias: true, alpha: true });
@@ -40,10 +40,10 @@ const Globe = () => {
     camera.position.z = 250;
     
     // Add lights
-    const ambientLight = new AmbientLight(0xf5e8c0, 0.6); // Warm sepia light
+    const ambientLight = new AmbientLight(0xffffff, 0.5); // White light
     scene.add(ambientLight);
     
-    const directionalLight = new DirectionalLight(0xf8dfa1, 1); // Warm highlight light
+    const directionalLight = new DirectionalLight(0xffffff, 1); // Pure white light
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
     
@@ -52,12 +52,12 @@ const Globe = () => {
       // Use a single solid color for the globe
       .showGlobe(true)
       .showAtmosphere(true)
-      .atmosphereColor('#7a5c28') // Sepia atmosphere
-      .atmosphereAltitude(0.18)
+      .atmosphereColor('#444444') // Dark gray atmosphere
+      .atmosphereAltitude(0.15)
       .globeMaterial(
         // Create a solid color material
         new MeshPhongMaterial({ 
-          color: '#402c12', // Darker sepia for globe
+          color: '#222222', // Dark gray for globe
           transparent: true,
           opacity: 0.9
         })
@@ -77,7 +77,7 @@ const Globe = () => {
         globe
           .polygonCapColor(() => 'rgba(0, 0, 0, 0)') // Transparent polygon caps
           .polygonSideColor(() => 'rgba(0, 0, 0, 0)') // Transparent polygon sides
-          .polygonStrokeColor(() => '#d9b382') // Warm sepia country outlines
+          .polygonStrokeColor(() => '#ffffff') // White country outlines
           .polygonAltitude(0.005); // Slightly raised to ensure visibility
       });
     
@@ -91,6 +91,21 @@ const Globe = () => {
     controls.enableZoom = true;
     controls.minDistance = 150;
     controls.maxDistance = 500;
+    
+    // Track if user is dragging the globe
+    let isDragging = false;
+    
+    renderer.domElement.addEventListener('pointerdown', () => {
+      isDragging = true;
+    });
+    
+    renderer.domElement.addEventListener('pointerup', () => {
+      isDragging = false;
+    });
+    
+    renderer.domElement.addEventListener('pointerout', () => {
+      isDragging = false;
+    });
     
     // Handle window resize
     const handleResize = () => {
@@ -107,8 +122,10 @@ const Globe = () => {
     const animate = () => {
       frameId = requestAnimationFrame(animate);
       
-      // Auto-rotate the globe
-      globe.rotation.y += 0.002;
+      // Auto-rotate the globe only when not dragging
+      if (!isDragging) {
+        globe.rotation.y += 0.002;
+      }
       
       controls.update();
       renderer.render(scene, camera);

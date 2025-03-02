@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import { fetchWeatherApi } from "openmeteo";
-
+import Link from "next/link"
 export default function SanFrancisco() {
     // State to hold weather data
     const [weatherData, setWeatherData] = useState(null);
