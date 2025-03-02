@@ -112,7 +112,8 @@ body {
   font-family: 'CaskaydiaMono', monospace;
   background-color: #000000;
   color: #f5f5dc;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 a {

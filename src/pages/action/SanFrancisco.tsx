@@ -641,21 +641,19 @@ export default function SanFranciscoAction() {
                     }
                   }}
                   style={{
-                    padding: '16px 24px',
+                    padding: question.id === 'survey_end' ? '24px' : '16px 24px',
                     backgroundColor: question.id === 'survey_end' ? 'rgba(120, 255, 140, 0.2)' : 'rgba(255, 255, 255, 0.05)',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
                     borderRadius: '0',
                     cursor: 'pointer',
-                    textAlign: 'left',
+                    textAlign: question.id === 'survey_end' ? 'center' : 'left',
                     fontSize: question.id === 'survey_end' ? '1.2rem' : '1rem',
                     fontWeight: question.id === 'survey_end' ? 'bold' : 200,
                     transition: 'all 0.2s ease',
                     color: 'white',
                     fontFamily: 'CaskaydiaMono, monospace',
                     letterSpacing: '0.03em',
-                    textAlign: question.id === 'survey_end' ? 'center' : 'left',
-                    marginTop: question.id === 'survey_end' ? '20px' : '0',
-                    padding: question.id === 'survey_end' ? '24px' : '16px 24px'
+                    marginTop: question.id === 'survey_end' ? '20px' : '0'
                   }}
                   onMouseOver={(e) => {
                     e.currentTarget.style.backgroundColor = question.id === 'survey_end' ? 'rgba(120, 255, 140, 0.3)' : 'rgba(255, 255, 255, 0.1)';
@@ -741,6 +739,34 @@ export default function SanFranciscoAction() {
     const relevantActions = localActions.find(action => action.id === highestImpactArea) || localActions[0];
     const otherActions = localActions.filter(action => action.id !== highestImpactArea);
     
+    // Create chart data
+    const categories = {
+      transportation: 0,
+      food: 0,
+      housing: 0,
+      travel: 0,
+      consumption: 0,
+      waste: 0
+    };
+    
+    // Calculate footprint by category
+    Object.keys(answers).forEach(questionId => {
+      const option = answers[questionId];
+      if (questionId.startsWith('transportation')) {
+        categories.transportation += option.footprint;
+      } else if (questionId.startsWith('diet') || questionId.startsWith('food')) {
+        categories.food += option.footprint;
+      } else if (questionId.startsWith('housing') || questionId.startsWith('energy') || questionId.startsWith('household')) {
+        categories.housing += option.footprint;
+      } else if (questionId.startsWith('flights')) {
+        categories.travel += option.footprint;
+      } else if (questionId.startsWith('shopping') || questionId.startsWith('clothes') || questionId.startsWith('electronics')) {
+        categories.consumption += option.footprint;
+      } else if (questionId.startsWith('recycling') || questionId.startsWith('compost') || questionId.startsWith('water')) {
+        categories.waste += option.footprint;
+      }
+    });
+    
     return (
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         <div style={{ 
@@ -789,6 +815,92 @@ export default function SanFranciscoAction() {
           }}>
             tons of CO₂ per year
           </p>
+          
+          {/* Visual breakdown of carbon footprint */}
+          <div style={{ margin: '40px auto', maxWidth: '100%' }}>
+            <div style={{ marginBottom: '12px', textAlign: 'left', fontSize: '0.9rem' }}>Breakdown by Category:</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span>Transportation</span>
+                  <span>{categories.transportation.toFixed(1)} tons</span>
+                </div>
+                <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                  <div style={{ 
+                    width: `${Math.min((categories.transportation / (footprint || 1)) * 100, 100)}%`, 
+                    height: '100%', 
+                    backgroundColor: 'rgba(120, 210, 255, 0.7)' 
+                  }}></div>
+                </div>
+              </div>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span>Food & Diet</span>
+                  <span>{categories.food.toFixed(1)} tons</span>
+                </div>
+                <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                  <div style={{ 
+                    width: `${Math.min((categories.food / (footprint || 1)) * 100, 100)}%`, 
+                    height: '100%', 
+                    backgroundColor: 'rgba(120, 255, 140, 0.7)' 
+                  }}></div>
+                </div>
+              </div>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span>Housing & Energy</span>
+                  <span>{categories.housing.toFixed(1)} tons</span>
+                </div>
+                <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                  <div style={{ 
+                    width: `${Math.min((categories.housing / (footprint || 1)) * 100, 100)}%`, 
+                    height: '100%', 
+                    backgroundColor: 'rgba(255, 220, 120, 0.7)' 
+                  }}></div>
+                </div>
+              </div>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span>Travel</span>
+                  <span>{categories.travel.toFixed(1)} tons</span>
+                </div>
+                <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                  <div style={{ 
+                    width: `${Math.min((categories.travel / (footprint || 1)) * 100, 100)}%`, 
+                    height: '100%', 
+                    backgroundColor: 'rgba(230, 120, 255, 0.7)' 
+                  }}></div>
+                </div>
+              </div>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span>Consumption</span>
+                  <span>{categories.consumption.toFixed(1)} tons</span>
+                </div>
+                <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                  <div style={{ 
+                    width: `${Math.min((categories.consumption / (footprint || 1)) * 100, 100)}%`, 
+                    height: '100%', 
+                    backgroundColor: 'rgba(255, 150, 120, 0.7)' 
+                  }}></div>
+                </div>
+              </div>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span>Waste & Water</span>
+                  <span>{categories.waste.toFixed(1)} tons</span>
+                </div>
+                <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                  <div style={{ 
+                    width: `${Math.min((categories.waste / (footprint || 1)) * 100, 100)}%`, 
+                    height: '100%', 
+                    backgroundColor: 'rgba(120, 230, 255, 0.7)' 
+                  }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <div style={{
             margin: '1.5rem auto',
             padding: '12px',
@@ -957,6 +1069,46 @@ export default function SanFranciscoAction() {
             }}
           >
             Retake Survey
+          </button>
+          
+          <button 
+            onClick={() => {
+              // Share functionality - basic implementation
+              if (navigator.share) {
+                navigator.share({
+                  title: 'My Carbon Footprint',
+                  text: `My carbon footprint is ${footprint?.toFixed(1)} tons CO₂ per year! Check your impact on the climate with this survey.`,
+                  url: window.location.href,
+                })
+                .catch(err => {
+                  console.log('Error sharing:', err);
+                });
+              } else {
+                alert('Share feature not supported by your browser. Try copying the URL manually.');
+              }
+            }}
+            style={{
+              padding: '12px 24px',
+              backgroundColor: 'rgba(120, 255, 140, 0.2)',
+              color: 'white',
+              border: '1px solid rgba(120, 255, 140, 0.3)',
+              borderRadius: '0',
+              cursor: 'pointer',
+              fontFamily: 'CaskaydiaMono, monospace',
+              fontWeight: 200,
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              fontSize: '0.8rem',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(120, 255, 140, 0.3)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(120, 255, 140, 0.2)';
+            }}
+          >
+            Share Results
           </button>
           
           <Link href="/SanFrancisco">
