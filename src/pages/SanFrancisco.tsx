@@ -9,8 +9,7 @@ export default function SanFrancisco() {
     const [sliderYear, setSliderYear] = useState(1950);
 
     // Helper function to create time ranges
-    const range = (start, stop, step) =>
-        Array.from({ length: Math.floor((stop - start) / step) }, (_, i) => start + i * step);
+    const range = (start, stop, step) => Array.from({ length: Math.floor((stop - start) / step) }, (_, i) => start + i * step);
 
     useEffect(() => {
         async function fetchData() {
