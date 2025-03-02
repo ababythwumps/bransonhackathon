@@ -15,6 +15,14 @@ export const majorCities: City[] = [
     longitude: -122.4194,
     population: 874961,
     slug: "SanFrancisco"
+  },
+  {
+    name: "New York",
+    country: "USA",
+    latitude: 40.730610,
+    longitude: -73.935242,
+    population: 8258000,
+    slug: "NewYork"
   }
 ];
 

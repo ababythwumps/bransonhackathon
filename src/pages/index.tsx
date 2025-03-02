@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import styles from "./index.module.css";
-import { findNearestCity } from "../data/cities";
+import { findNearestCity } from "~/data/cities";
 
 // Import Globe component dynamically with SSR disabled
 const Globe = dynamic(() => import("../components/Globe"), { ssr: false });
@@ -175,6 +175,68 @@ export default function Home() {
                         }}
                         >
                             SAN FRANCISCO
+                        </button>
+                    </Link>
+
+                    <Link href="/NewYork">
+                        <button style={{
+                            padding: '12px 24px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                            color: '#ffffff',
+                            border: '1px solid #ffffff',
+                            borderRadius: '8px',
+                            fontSize: '1.1rem',
+                            fontFamily: 'CaskaydiaMono, monospace',
+                            fontWeight: 200,
+                            letterSpacing: '0.1em',
+                            cursor: 'pointer',
+                            backdropFilter: 'blur(4px)',
+                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+                            transition: 'all 0.3s ease',
+                            width: '280px',
+                            textAlign: 'center'
+                        }}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                        >
+                            NEW YORK
+                        </button>
+                    </Link>
+
+                    <Link href="/Chicago">
+                        <button style={{
+                            padding: '12px 24px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                            color: '#ffffff',
+                            border: '1px solid #ffffff',
+                            borderRadius: '8px',
+                            fontSize: '1.1rem',
+                            fontFamily: 'CaskaydiaMono, monospace',
+                            fontWeight: 200,
+                            letterSpacing: '0.1em',
+                            cursor: 'pointer',
+                            backdropFilter: 'blur(4px)',
+                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+                            transition: 'all 0.3s ease',
+                            width: '280px',
+                            textAlign: 'center'
+                        }}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)';
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                }}
+                        >
+                            CHICAGO
                         </button>
                     </Link>
 

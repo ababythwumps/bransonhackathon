@@ -4,7 +4,7 @@ import { fetchWeatherApi } from "openmeteo";
 import Link from "next/link";
 import styles from "../styles/SanFrancisco.module.css";
 
-export default function SanFrancisco() {
+export default function NewYork() {
     // State to hold weather data
     const [weatherData, setWeatherData] = useState(null);
     const [error, setError] = useState(null);
@@ -17,8 +17,8 @@ export default function SanFrancisco() {
     useEffect(() => {
         async function fetchData() {
             const params = {
-                latitude: 37.7749,
-                longitude: -122.4194,
+                latitude: 40.730610,
+                longitude: -73.935242,
                 start_date: "1950-01-01",
                 end_date: "2050-12-31",
                 models: [
@@ -116,12 +116,12 @@ export default function SanFrancisco() {
     return (
         <div className={styles.container}>
             <Head>
-                <title>San Francisco Climate Forecast</title>
+                <title>New York Climate Forecast</title>
                 <meta name="description" content="San Francisco climate projection through 2050" />
             </Head>
             
             <header className={styles.header}>
-                <h1>SAN FRANCISCO, CA</h1>
+                <h1>NEW YORK, NY</h1>
                 <p className={styles.subtitle}>Climate Projection through 2050</p>
             </header>
 
@@ -191,8 +191,8 @@ export default function SanFrancisco() {
                 </section>
                 
                 <div className={styles.actionSection}>
-                    <p>See how our actions today can impact San Francisco's climate future.</p>
-                    <Link href="/takeaction">
+                    <p>See how our actions today can impact New York's climate future.</p>
+                    <Link href="/takeactionNY">
                         <button className={styles.actionButton}>
                             Take Action Now
                         </button>
