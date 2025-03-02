@@ -151,39 +151,64 @@ export default function SanFrancisco() {
     // Function to update GIF visual effects based on year
     const updateGifEffects = (percentage: number, year: number) => {
         try {
+            // Calculate which frame of the GIF should be shown based on year
+            // This simulates controlling GIF playback with the year slider
+            
             // Sea Level GIF
             const seaLevelGif = document.querySelector('#seaLevelGif img') as HTMLImageElement | null;
             if (seaLevelGif) {
-                // Increase contrast and brightness as years progress
-                const contrast = 1 + percentage * 1;  // 1 to 2
+                // For a true GIF controller, we would use a GIF player library that allows 
+                // seeking to a specific frame based on the percentage
+
+                // For this implementation, we use CSS effects to simulate progress
+                
+                // Adjust position to simulate rising water level
+                const riseAmount = percentage * 35; // px to move up (more visible)
+                seaLevelGif.style.transform = `translateY(${-riseAmount}px)`;
+                
+                // Make water appear more prominent with contrast/brightness
+                const contrast = 1 + percentage * 1.2;  // 1 to 2.2
                 const brightness = 1 + percentage * 0.5;  // 1 to 1.5
                 seaLevelGif.style.filter = `contrast(${contrast}) brightness(${brightness})`;
                 
-                // Adjust position to simulate rising water
-                const riseAmount = percentage * 30; // px to move up
-                seaLevelGif.style.transform = `translateY(${-riseAmount}px)`;
+                // For more dramatic effect as years progress
+                const scale = 1 + percentage * 0.1; // 1 to 1.1
+                seaLevelGif.style.transform = `translateY(${-riseAmount}px) scale(${scale})`;
             }
             
             // Drought GIF
             const droughtGif = document.querySelector('#droughtGif img') as HTMLImageElement | null;
             if (droughtGif) {
-                // Add sepia and change hue to simulate drying/browning
-                const sepia = percentage;  // 0 to 1
+                // Increase yellowing/browning as drought intensifies
+                const sepia = percentage * 0.8;  // 0 to 0.8
                 const hueRotate = percentage * 30;  // 0 to 30 degrees
-                droughtGif.style.filter = `sepia(${sepia}) hue-rotate(${hueRotate}deg)`;
+                const saturate = 1 + percentage; // 1 to 2
+                
+                // Combine effects for more dramatic appearance
+                droughtGif.style.filter = `sepia(${sepia}) hue-rotate(${hueRotate}deg) saturate(${saturate})`;
+                
+                // Add a subtle yellow overlay to simulate drying
+                const yellowOpacity = percentage * 0.3; // 0 to 0.3
+                droughtGif.style.boxShadow = `inset 0 0 70px rgba(255, 204, 0, ${yellowOpacity})`;
             }
             
-            // Wildfire GIF
-            const wildfireGif = document.querySelector('#wildfireGif img') as HTMLImageElement | null;
-            if (wildfireGif) {
-                // Increase saturation and contrast for more intense fire
-                const saturate = 1 + percentage * 2;  // 1 to 3
-                const contrast = 1 + percentage;  // 1 to 2
-                wildfireGif.style.filter = `saturate(${saturate}) contrast(${contrast})`;
+            // Arctic Ice GIF
+            const arcticIceGif = document.querySelector('#arcticIceGif img') as HTMLImageElement | null;
+            if (arcticIceGif) {
+                // Simulate ice melting with brightness and blue tint
+                const brightness = 1 + percentage * 0.6;  // 1 to 1.6
+                const blueAmount = percentage * 15; // 0 to 15
                 
-                // Add a subtle red overlay as time progresses
-                const redOverlay = percentage * 0.3;  // 0 to 0.3
-                wildfireGif.style.boxShadow = `inset 0 0 50px rgba(255, 0, 0, ${redOverlay})`;
+                // Combine effects - less blur, more color adjustment
+                arcticIceGif.style.filter = `brightness(${brightness}) hue-rotate(${blueAmount}deg)`;
+                
+                // Simulate water appearing as ice melts
+                const blueOverlay = percentage * 0.35;  // 0 to 0.35
+                arcticIceGif.style.boxShadow = `inset 0 0 80px rgba(0, 130, 255, ${blueOverlay})`;
+                
+                // Subtle zoom effect to focus on melting areas
+                const scale = 1 + percentage * 0.15; // 1 to 1.15
+                arcticIceGif.style.transform = `scale(${scale})`;
             }
         } catch (err) {
             console.error("Error updating GIF effects:", err);
@@ -316,22 +341,22 @@ export default function SanFrancisco() {
                                 </div>
 
                                 <div className={styles.gifCard}>
-                                    <h3>Wildfire Risk</h3>
+                                    <h3>Arctic Ice Loss</h3>
                                     <div className={styles.gifWrapper}>
                                         <div className={styles.gifProgressBar} style={{ width: `${((sliderYear - 1950) / (2050 - 1950)) * 100}%` }}></div>
-                                        <div className={styles.gifPlayer} id="wildfireGif">
+                                        <div className={styles.gifPlayer} id="arcticIceGif">
                                             <img 
-                                                src="/climate-gifs/wildfire-progression.gif" 
-                                                alt="Wildfire risk progression" 
+                                                src="/climate-gifs/arctic-ice-loss.gif" 
+                                                alt="Arctic ice loss progression" 
                                                 className={styles.climateGif}
                                                 style={{ 
                                                     opacity: 0.8,
-                                                    filter: `saturate(${1 + (sliderYear - 1950) / 50}) contrast(${1 + (sliderYear - 1950) / 100})`
+                                                    filter: `brightness(${1 + (sliderYear - 1950) / 100}) blur(${(sliderYear - 1950) / 500}px)`
                                                 }}
                                             />
                                         </div>
                                     </div>
-                                    <p>Wildfire frequency and intensity are projected to increase with higher temperatures. Year: {sliderYear}.</p>
+                                    <p>Arctic sea ice is melting at an accelerating rate due to global warming. Year: {sliderYear}.</p>
                                 </div>
                             </div>
                         </div>
