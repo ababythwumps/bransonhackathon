@@ -267,5 +267,4 @@ export default function SanFrancisco() {
         </div>
     );
 }
-
-//Comment for vercel
+//Comment for Vercel 2
