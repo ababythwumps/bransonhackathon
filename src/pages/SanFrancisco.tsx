@@ -112,7 +112,7 @@ export default function SanFrancisco() {
                     }
                     if (precipitationElement && weatherData.daily.precipitation_sum[yearIndex] !== undefined) {
                         const precipValue = weatherData.daily.precipitation_sum[yearIndex] as number;
-                        precipitationElement.innerHTML = String(precipValue);
+                        precipitationElement.innerHTML = String(Math.round(precipValue * 1000) / 1000);
                     }
                 }
                 
@@ -216,9 +216,7 @@ export default function SanFrancisco() {
     };
     
     // Calculate the temperature and precipitation for the current year
-    const currentTempRaw = weatherData?.daily?.temperature2mMax?.[yearIndex];
-    // Ensure currentTemp is either a number or undefined, not any other type
-    const currentTemp: number | undefined = typeof currentTempRaw === 'number' ? currentTempRaw : undefined;
+    const currentTemp = weatherData?.daily?.temperature2mMax?.[yearIndex];
     const currentPrecip = weatherData?.daily?.precipitation_sum?.[yearIndex];
     // Use non-null assertion since we've already handled the undefined case in getTemperatureColor
     const tempColor = getTemperatureColor(currentTemp);
