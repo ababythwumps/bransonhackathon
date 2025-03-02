@@ -164,27 +164,93 @@ export default function NewYork() {
                             <div className={styles.spinner}></div>
                         </div>
                     ) : weatherData ? (
-                        <div className={styles.weatherDisplay}>
-                            <div className={styles.weatherCard} style={{ borderColor: tempColor }}>
-                                <h2>Maximum Temperature</h2>
-                                <div className={styles.dataValue} style={{ color: tempColor }}>
-                                    <span id="temperature">
-                                        {currentTemp}
-                                    </span>
-                                    <span className={styles.unit}>°F</span>
+                        <>
+                            <div className={styles.weatherDisplay}>
+                                <div className={styles.weatherCard} style={{ borderColor: tempColor }}>
+                                    <h2>Maximum Temperature</h2>
+                                    <div className={styles.dataValue} style={{ color: tempColor }}>
+                                        <span id="temperature">
+                                            {currentTemp}
+                                        </span>
+                                        <span className={styles.unit}>°F</span>
+                                    </div>
+                                </div>
+
+                                <div className={styles.weatherCard}>
+                                    <h2>Precipitation</h2>
+                                    <div className={styles.dataValue}>
+                                        <span id="precipitation">
+                                            {currentPrecip}
+                                        </span>
+                                        <span className={styles.unit}>in</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className={styles.weatherCard}>
-                                <h2>Precipitation</h2>
-                                <div className={styles.dataValue}>
-                                    <span id="precipitation">
-                                        {currentPrecip}
-                                    </span>
-                                    <span className={styles.unit}>in</span>
+                            <div className={styles.climateVisualization}>
+                                <h2>Climate Change Visualizations</h2>
+                                <p>See the impact of climate change on New York as time progresses</p>
+                                
+                                <div className={styles.gifContainer}>
+                                    <div className={styles.gifCard}>
+                                        <h3>Sea Level Rise</h3>
+                                        <div className={styles.gifWrapper}>
+                                            <div className={styles.gifProgressBar} style={{ width: `${((sliderYear - 1950) / (2050 - 1950)) * 100}%` }}></div>
+                                            <div className={styles.gifPlayer} id="seaLevelGif">
+                                                <img 
+                                                    src="/climate-gifs/sea-level-rise.gif" 
+                                                    alt="Sea level rise over time" 
+                                                    className={styles.climateGif}
+                                                    style={{ 
+                                                        opacity: 0.8,
+                                                        filter: `contrast(${1 + (sliderYear - 1950) / 100}) brightness(${1 + (sliderYear - 1950) / 200})`
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <p>New York City could experience sea level rise of up to 2.1 feet by 2050. Currently showing: {sliderYear}.</p>
+                                    </div>
+
+                                    <div className={styles.gifCard}>
+                                        <h3>Urban Heat Island</h3>
+                                        <div className={styles.gifWrapper}>
+                                            <div className={styles.gifProgressBar} style={{ width: `${((sliderYear - 1950) / (2050 - 1950)) * 100}%` }}></div>
+                                            <div className={styles.gifPlayer} id="droughtGif">
+                                                <img 
+                                                    src="/climate-gifs/drought-progression.gif" 
+                                                    alt="Urban heat island effects" 
+                                                    className={styles.climateGif}
+                                                    style={{ 
+                                                        opacity: 0.8,
+                                                        filter: `sepia(${(sliderYear - 1950) / 100}) hue-rotate(${(sliderYear - 1950) / 10}deg)`
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <p>NYC's urban heat island effect is expected to intensify with climate change. Year: {sliderYear}.</p>
+                                    </div>
+
+                                    <div className={styles.gifCard}>
+                                        <h3>Arctic Ice Loss</h3>
+                                        <div className={styles.gifWrapper}>
+                                            <div className={styles.gifProgressBar} style={{ width: `${((sliderYear - 1950) / (2050 - 1950)) * 100}%` }}></div>
+                                            <div className={styles.gifPlayer} id="arcticIceGif">
+                                                <img 
+                                                    src="/climate-gifs/arctic-ice-loss.gif" 
+                                                    alt="Arctic ice loss progression" 
+                                                    className={styles.climateGif}
+                                                    style={{ 
+                                                        opacity: 0.8,
+                                                        filter: `brightness(${1 + (sliderYear - 1950) / 100}) blur(${(sliderYear - 1950) / 500}px)`
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <p>Arctic sea ice is melting at an accelerating rate due to global warming. Year: {sliderYear}.</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </>
                     ) : (
                         <p className={styles.noData}>No weather data available</p>
                     )}

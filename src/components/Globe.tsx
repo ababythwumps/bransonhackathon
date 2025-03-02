@@ -21,10 +21,11 @@ import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { feature } from 'topojson-client';
 import { useRouter } from 'next/router';
 
-// SF and NY coordinates - adding extra info for debugging
+// City coordinates - adding extra info for debugging
 const LOCATIONS = [
   { id: 'sf', name: 'San Francisco', lat: 37.7749, lng: -122.4194, url: '/sanfrancisco' },
-  { id: 'ny', name: 'New York', lat: 40.7128, lng: -74.0060, url: '/newyork' }
+  { id: 'ny', name: 'New York', lat: 40.7128, lng: -74.0060, url: '/newyork' },
+  { id: 'chi', name: 'Chicago', lat: 41.8781, lng: -87.6298, url: '/chicago' }
 ];
 
 const Globe = () => {
@@ -47,6 +48,8 @@ const Globe = () => {
         navigateToCity('sf');
       } else if (event.key === '2') {
         navigateToCity('ny');
+      } else if (event.key === '3') {
+        navigateToCity('chi');
       }
     };
     
@@ -252,15 +255,15 @@ const Globe = () => {
     
     window.addEventListener('resize', handleResize);
     
-    // Set initial view to focus on NY and SF area (roughly center point between them)
-    // This will position the camera to show both cities
-    const centerLat = (LOCATIONS[0].lat + LOCATIONS[1].lat) / 2;
-    const centerLng = (LOCATIONS[0].lng + LOCATIONS[1].lng) / 2;
+    // Set initial view to focus on all three cities (center point weighted to include Chicago)
+    // This will position the camera to show all three cities
+    const centerLat = (LOCATIONS[0].lat + LOCATIONS[1].lat + LOCATIONS[2].lat) / 3;
+    const centerLng = (LOCATIONS[0].lng + LOCATIONS[1].lng + LOCATIONS[2].lng) / 3;
     
     // Convert coordinates to 3D position
     const phi = (90 - centerLat) * (Math.PI / 180);
     const theta = (centerLng + 180) * (Math.PI / 180);
-    const radius = 250; // Match camera position distance
+    const radius = 270; // Pull back camera a bit to see all cities
     
     // Position camera to look at the center point of NY and SF
     camera.position.x = -radius * Math.sin(phi) * Math.cos(theta);
