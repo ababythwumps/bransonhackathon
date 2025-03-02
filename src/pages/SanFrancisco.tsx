@@ -108,9 +108,9 @@ export default function SanFrancisco() {
 
     // Calculate the temperature and precipitation for the current year
     // @ts-ignore
-    const currentTemp = weatherData?.daily?.temperature2mMax[yearIndex];
+    const currentTemp = Math.round(weatherData?.daily?.temperature2mMax[yearIndex] * 10) / 10;
     // @ts-ignore
-    const currentPrecip = weatherData?.daily?.precipitation_sum[yearIndex];
+    const currentPrecip = String(Math.round(weatherData?.daily?.precipitation_sum[yearIndex] * 1000) / 1000);
     const tempColor = getTemperatureColor(currentTemp);
 
     return (
@@ -169,7 +169,7 @@ export default function SanFrancisco() {
                                 <h2>Maximum Temperature</h2>
                                 <div className={styles.dataValue} style={{ color: tempColor }}>
                                     <span id="temperature">
-                                        {Math.round(currentTemp * 10) / 10}
+                                        {currentTemp}
                                     </span>
                                     <span className={styles.unit}>°F</span>
                                 </div>
