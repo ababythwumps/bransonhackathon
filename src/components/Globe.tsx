@@ -17,19 +17,46 @@ import {
   Vector3
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { feature } from 'topojson-client';
 import { useRouter } from 'next/router';
 
-// SF and NY coordinates
+// SF and NY coordinates - adding extra info for debugging
 const LOCATIONS = [
-  { name: 'San Francisco', lat: 37.7749, lng: -122.4194, url: '/sanfrancisco' },
-  { name: 'New York', lat: 40.7128, lng: -74.0060, url: '/newyork' }
+  { id: 'sf', name: 'San Francisco', lat: 37.7749, lng: -122.4194, url: '/sanfrancisco' },
+  { id: 'ny', name: 'New York', lat: 40.7128, lng: -74.0060, url: '/newyork' }
 ];
 
 const Globe = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Function to handle navigation to city pages
+  const navigateToCity = (cityId: string) => {
+    console.log(`Navigating to city: ${cityId}`);
+    const city = LOCATIONS.find(loc => loc.id === cityId);
+    if (city) {
+      router.push(city.url);
+    }
+  };
   
+  // Add keyboard shortcuts for navigation
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === '1') {
+        navigateToCity('sf');
+      } else if (event.key === '2') {
+        navigateToCity('ny');
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyPress);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [router]);
+
   useEffect(() => {
     if (!containerRef.current) return;
     
@@ -42,10 +69,18 @@ const Globe = () => {
     const scene = new Scene();
     scene.background = new Color('#000000'); // Pure black background
     
-    // Set up renderer
+    // Set up WebGL renderer
     const renderer = new WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     containerRef.current.appendChild(renderer.domElement);
+    
+    // Set up CSS renderer for HTML elements
+    const labelRenderer = new CSS2DRenderer();
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.top = '0px';
+    labelRenderer.domElement.style.pointerEvents = 'none'; // Important: Allow pointer events to pass through to the WebGL canvas
+    containerRef.current.appendChild(labelRenderer.domElement);
     
     // Set up camera
     const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -93,17 +128,38 @@ const Globe = () => {
           .polygonAltitude(0.005); // Slightly raised to ensure visibility
       });
     
-    // Add point of interest markers for San Francisco and New York
+    // Add HTML elements as clickable buttons for San Francisco and New York
     globe
-      .labelsData(LOCATIONS)
-      .labelLat(d => d.lat)
-      .labelLng(d => d.lng)
-      .labelText(d => d.name)
-      .labelColor(() => '#ff5566') // Bright pink/red highlight
-      .labelAltitude(0.01)
-      .labelSize(0.5)
-      .labelDotRadius(0.4) // Larger dot for visibility
-      .labelDotOrientation(() => 'bottom');
+      .htmlElementsData(LOCATIONS)
+      .htmlLat(d => d.lat)
+      .htmlLng(d => d.lng)
+      .htmlAltitude(0.1)
+      .htmlElement(d => {
+        const el = document.createElement('div');
+        el.innerHTML = `<button style="
+          background-color: #ff5566; 
+          color: white; 
+          border: none; 
+          border-radius: 20px; 
+          padding: 8px 16px; 
+          font-weight: bold;
+          cursor: pointer;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+          pointer-events: auto;
+        ">${d.name}</button>`;
+        
+        // Add click event with stopPropagation to prevent globe dragging
+        const button = el.querySelector('button');
+        if (button) {
+          button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            console.log(`Button clicked for ${d.name} (${d.id}), navigating to: ${d.url}`);
+            navigateToCity(d.id);
+          });
+        }
+        
+        return el;
+      });
       
     // Add rings to highlight the locations
     globe
@@ -191,6 +247,7 @@ const Globe = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      labelRenderer.setSize(window.innerWidth, window.innerHeight);
     };
     
     window.addEventListener('resize', handleResize);
@@ -221,6 +278,7 @@ const Globe = () => {
       
       controls.update();
       renderer.render(scene, camera);
+      labelRenderer.render(scene, camera); // Render HTML elements
     };
     
     animate();
@@ -235,6 +293,7 @@ const Globe = () => {
       
       if (containerRef.current) {
         containerRef.current.removeChild(renderer.domElement);
+        containerRef.current.removeChild(labelRenderer.domElement);
       }
       
       controls.dispose();
