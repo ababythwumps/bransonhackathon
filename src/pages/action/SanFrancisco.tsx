@@ -619,7 +619,10 @@ export default function SanFranciscoAction() {
                   onClick={() => {
                     // Special handling for the end survey question
                     if (question.id === 'survey_end') {
-                      // Force calculate footprint with whatever answers we have so far
+                      // Use both approaches to ensure it works:
+                      // 1. Set step count high (which triggers results when rendering)
+                      // 2. Directly calculate footprint
+                      setCurrentStep(500);
                       calculateFootprint(answers);
                       return;
                     }
@@ -1027,7 +1030,10 @@ export default function SanFranciscoAction() {
             {currentStep > 0 && footprint === null && (
               <button 
                 onClick={() => {
-                  // Force calculate footprint with whatever answers we have so far
+                  // Use both approaches to ensure it works:
+                  // 1. Set step count high (which triggers results when rendering)
+                  // 2. Directly calculate footprint
+                  setCurrentStep(500); 
                   calculateFootprint(answers);
                 }}
                 style={{
