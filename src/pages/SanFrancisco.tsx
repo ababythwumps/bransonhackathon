@@ -88,7 +88,7 @@ export default function SanFrancisco() {
                 // @ts-ignore
                 document.getElementById("temperature")!.innerHTML = String(Math.round(weatherData.daily.temperature2mMax[yearIndex] * 10) / 10);
                 // @ts-ignore
-                document.getElementById("precipitation")!.innerHTML = String(weatherData.daily.precipitation_sum[yearIndex]);
+                document.getElementById("precipitation")!.innerHTML = String(Math.round(weatherData.daily.precipitation_sum[yearIndex] * 1000) / 1000);
             } catch (err) {
                 console.error("Error processing data for selected year:", err);
             }
