@@ -132,26 +132,17 @@ const Globe = () => {
       });
     
     // Add HTML elements as clickable buttons for San Francisco and New York
-    // @ts-ignore
     globe
       .htmlElementsData(LOCATIONS)
+        // @ts-ignore
       .htmlLat(d => d.lat)
+        // @ts-ignore
       .htmlLng(d => d.lng)
       .htmlAltitude(0.1)
       .htmlElement(d => {
         const el = document.createElement('div');
         // @ts-ignore
-        el.innerHTML = `<button style="
-          background-color: #ff5566; 
-          color: white; 
-          border: none; 
-          border-radius: 20px; 
-          padding: 8px 16px; 
-          font-weight: bold;
-          cursor: pointer;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-          pointer-events: auto;
-        ">${d.name}</button>`;
+        el.innerHTML = `<button style=" background-color: #ff5566; color: white; border: none; border-radius: 20px; padding: 8px 16px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3); pointer-events: auto;">${d.name}</button>`;
         
         // Add click event with stopPropagation to prevent globe dragging
         const button = el.querySelector('button');
@@ -172,7 +163,9 @@ const Globe = () => {
     // @ts-ignore
     globe
       .ringsData(LOCATIONS)
+        // @ts-ignore
       .ringLat(d => d.lat)
+        // @ts-ignore
       .ringLng(d => d.lng)
       .ringColor(() => '#ff5566')
       .ringMaxRadius(1.0)
@@ -228,10 +221,7 @@ const Globe = () => {
               if (current.__globeObjType === 'label' && current.__data) {
                 // Found a label, navigate to its URL
                 // @ts-ignore
-                const locationData = LOCATIONS.find(loc =>
-                  loc.lat === current.__data.lat &&
-                  loc.lng === current.__data.lng
-                );
+                const locationData = LOCATIONS.find(loc => loc.lat === current.__data.lat && loc.lng === current.__data.lng);
                 
                 if (locationData) {
                   router.push(locationData.url);
