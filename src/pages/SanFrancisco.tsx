@@ -223,6 +223,9 @@ export default function SanFrancisco() {
     // Use non-null assertion since we've already handled the undefined case in getTemperatureColor
     const tempColor = getTemperatureColor(currentTemp);
 
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
     return (
         <div className={styles.container}>
             <Head>
@@ -280,7 +283,7 @@ export default function SanFrancisco() {
                                 <h2>Maximum Temperature</h2>
                                 <div className={styles.dataValue} style={{ color: tempColor }}>
                                     <span id="temperature">
-                                        {Math.round(currentTemp * 10) / 10}
+                                        {Math.round(currentTemp! * 10) / 10}
                                     </span>
                                     <span className={styles.unit}>°F</span>
                                 </div>
@@ -290,7 +293,7 @@ export default function SanFrancisco() {
                                 <h2>Precipitation</h2>
                                 <div className={styles.dataValue}>
                                     <span id="precipitation">
-                                        {currentPrecip}
+                                        {Math.round(currentPrecip! * 1000) / 1000}
                                     </span>
                                     <span className={styles.unit}>in</span>
                                 </div>
