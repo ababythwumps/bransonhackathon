@@ -255,17 +255,17 @@ const Globe = () => {
     
     window.addEventListener('resize', handleResize);
     
-    // Set initial view to focus on all three cities (center point weighted to include Chicago)
-    // This will position the camera to show all three cities
-    const centerLat = (LOCATIONS[0].lat + LOCATIONS[1].lat + LOCATIONS[2].lat) / 3;
-    const centerLng = (LOCATIONS[0].lng + LOCATIONS[1].lng + LOCATIONS[2].lng) / 3;
+    // Set initial view to focus on the United States
+    // Fixed coordinates for a good view of the continental US
+    const centerLat = 39.5;  // Middle of the US (approximately)
+    const centerLng = -98.0; // Middle of the US (approximately)
     
     // Convert coordinates to 3D position
     const phi = (90 - centerLat) * (Math.PI / 180);
     const theta = (centerLng + 180) * (Math.PI / 180);
-    const radius = 270; // Pull back camera a bit to see all cities
+    const radius = 280; // Pull back camera to see the entire US
     
-    // Position camera to look at the center point of NY and SF
+    // Position camera to look at the center of the United States
     camera.position.x = -radius * Math.sin(phi) * Math.cos(theta);
     camera.position.y = radius * Math.cos(phi);
     camera.position.z = radius * Math.sin(phi) * Math.sin(theta);
