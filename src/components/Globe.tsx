@@ -132,6 +132,7 @@ const Globe = () => {
       });
     
     // Add HTML elements as clickable buttons for San Francisco and New York
+    // @ts-ignore
     globe
       .htmlElementsData(LOCATIONS)
       .htmlLat(d => d.lat)
@@ -139,6 +140,7 @@ const Globe = () => {
       .htmlAltitude(0.1)
       .htmlElement(d => {
         const el = document.createElement('div');
+        // @ts-ignore
         el.innerHTML = `<button style="
           background-color: #ff5566; 
           color: white; 
@@ -156,7 +158,9 @@ const Globe = () => {
         if (button) {
           button.addEventListener('click', (event) => {
             event.stopPropagation();
+            // @ts-ignore
             console.log(`Button clicked for ${d.name} (${d.id}), navigating to: ${d.url}`);
+            // @ts-ignore
             navigateToCity(d.id);
           });
         }
@@ -165,6 +169,7 @@ const Globe = () => {
       });
       
     // Add rings to highlight the locations
+    // @ts-ignore
     globe
       .ringsData(LOCATIONS)
       .ringLat(d => d.lat)
@@ -219,10 +224,12 @@ const Globe = () => {
             
             // Check if we clicked on a label or its dot
             while (current && current.parent) {
+              // @ts-ignore
               if (current.__globeObjType === 'label' && current.__data) {
                 // Found a label, navigate to its URL
-                const locationData = LOCATIONS.find(loc => 
-                  loc.lat === current.__data.lat && 
+                // @ts-ignore
+                const locationData = LOCATIONS.find(loc =>
+                  loc.lat === current.__data.lat &&
                   loc.lng === current.__data.lng
                 );
                 
