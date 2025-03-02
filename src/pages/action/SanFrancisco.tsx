@@ -278,7 +278,7 @@ const localActions = [
       'Join the SF Bicycle Coalition and use bike-friendly routes',
       'Consider an electric vehicle for your next car purchase',
       'Use Bay Area car sharing services for occasional car needs',
-      'Take advantage of San Francisco\'s walkable neighborhoods',
+      'Take advantage of San Francisco&apos;s walkable neighborhoods',
       'Use ride-sharing for group trips rather than solo rides'
     ],
     localResources: [
@@ -398,11 +398,13 @@ const localActions = [
 
 export default function SanFranciscoAction() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [answers, setAnswers] = useState<Record<string, AnswerOption>>({});
   const [footprint, setFootprint] = useState<number | null>(null);
   const [highestImpactArea, setHighestImpactArea] = useState<string | null>(null);
 
-  const handleAnswer = (questionId: string, option: any) => {
+  // We're not using this function directly, keeping it for reference
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleAnswer = (questionId: string, option: AnswerOption) => {
     const newAnswers = { ...answers, [questionId]: option };
     setAnswers(newAnswers);
     
@@ -445,10 +447,16 @@ export default function SanFranciscoAction() {
     }
   };
 
-  const calculateFootprint = (userAnswers: Record<string, any>) => {
+  type AnswerOption = {
+    id: string;
+    text: string;
+    footprint: number;
+  };
+
+  const calculateFootprint = (userAnswers: Record<string, AnswerOption>) => {
     // Calculate total footprint
     let total = 0;
-    let impacts: Record<string, number> = {};
+    const impacts: Record<string, number> = {};
     
     // Add up the footprint values from all answers
     Object.keys(userAnswers).forEach(questionId => {
@@ -736,7 +744,7 @@ export default function SanFranciscoAction() {
   // Render survey results
   const renderResults = () => {
     // Get the relevant local actions based on highest impact area
-    const relevantActions = localActions.find(action => action.id === highestImpactArea) || localActions[0];
+    const relevantActions = localActions.find(action => action.id === highestImpactArea) ?? localActions[0];
     const otherActions = localActions.filter(action => action.id !== highestImpactArea);
     
     // Create chart data
@@ -752,18 +760,20 @@ export default function SanFranciscoAction() {
     // Calculate footprint by category
     Object.keys(answers).forEach(questionId => {
       const option = answers[questionId];
+      const footprintValue = option.footprint ?? 0;
+      
       if (questionId.startsWith('transportation')) {
-        categories.transportation += option.footprint;
+        categories.transportation += footprintValue;
       } else if (questionId.startsWith('diet') || questionId.startsWith('food')) {
-        categories.food += option.footprint;
+        categories.food += footprintValue;
       } else if (questionId.startsWith('housing') || questionId.startsWith('energy') || questionId.startsWith('household')) {
-        categories.housing += option.footprint;
+        categories.housing += footprintValue;
       } else if (questionId.startsWith('flights')) {
-        categories.travel += option.footprint;
+        categories.travel += footprintValue;
       } else if (questionId.startsWith('shopping') || questionId.startsWith('clothes') || questionId.startsWith('electronics')) {
-        categories.consumption += option.footprint;
+        categories.consumption += footprintValue;
       } else if (questionId.startsWith('recycling') || questionId.startsWith('compost') || questionId.startsWith('water')) {
-        categories.waste += option.footprint;
+        categories.waste += footprintValue;
       }
     });
     
@@ -827,7 +837,7 @@ export default function SanFranciscoAction() {
                 </div>
                 <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
                   <div style={{ 
-                    width: `${Math.min((categories.transportation / (footprint || 1)) * 100, 100)}%`, 
+                    width: `${Math.min((categories.transportation / (footprint ?? 1)) * 100, 100)}%`, 
                     height: '100%', 
                     backgroundColor: 'rgba(120, 210, 255, 0.7)' 
                   }}></div>
@@ -840,7 +850,7 @@ export default function SanFranciscoAction() {
                 </div>
                 <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
                   <div style={{ 
-                    width: `${Math.min((categories.food / (footprint || 1)) * 100, 100)}%`, 
+                    width: `${Math.min((categories.food / (footprint ?? 1)) * 100, 100)}%`, 
                     height: '100%', 
                     backgroundColor: 'rgba(120, 255, 140, 0.7)' 
                   }}></div>
@@ -853,7 +863,7 @@ export default function SanFranciscoAction() {
                 </div>
                 <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
                   <div style={{ 
-                    width: `${Math.min((categories.housing / (footprint || 1)) * 100, 100)}%`, 
+                    width: `${Math.min((categories.housing / (footprint ?? 1)) * 100, 100)}%`, 
                     height: '100%', 
                     backgroundColor: 'rgba(255, 220, 120, 0.7)' 
                   }}></div>
@@ -866,7 +876,7 @@ export default function SanFranciscoAction() {
                 </div>
                 <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
                   <div style={{ 
-                    width: `${Math.min((categories.travel / (footprint || 1)) * 100, 100)}%`, 
+                    width: `${Math.min((categories.travel / (footprint ?? 1)) * 100, 100)}%`, 
                     height: '100%', 
                     backgroundColor: 'rgba(230, 120, 255, 0.7)' 
                   }}></div>
@@ -879,7 +889,7 @@ export default function SanFranciscoAction() {
                 </div>
                 <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
                   <div style={{ 
-                    width: `${Math.min((categories.consumption / (footprint || 1)) * 100, 100)}%`, 
+                    width: `${Math.min((categories.consumption / (footprint ?? 1)) * 100, 100)}%`, 
                     height: '100%', 
                     backgroundColor: 'rgba(255, 150, 120, 0.7)' 
                   }}></div>
@@ -892,7 +902,7 @@ export default function SanFranciscoAction() {
                 </div>
                 <div style={{ width: '100%', height: '12px', backgroundColor: 'rgba(255,255,255,0.1)' }}>
                   <div style={{ 
-                    width: `${Math.min((categories.waste / (footprint || 1)) * 100, 100)}%`, 
+                    width: `${Math.min((categories.waste / (footprint ?? 1)) * 100, 100)}%`, 
                     height: '100%', 
                     backgroundColor: 'rgba(120, 230, 255, 0.7)' 
                   }}></div>
@@ -935,7 +945,7 @@ export default function SanFranciscoAction() {
           </h3>
           
           <p style={{ opacity: 0.8, lineHeight: '1.6' }}>
-            Based on your responses, focusing on {relevantActions?.title.toLowerCase()} would have the biggest impact.
+            Based on your responses, focusing on {relevantActions?.title?.toLowerCase()} would have the biggest impact.
           </p>
           
           <ul style={{ 
@@ -1329,7 +1339,7 @@ export default function SanFranciscoAction() {
             </div>
             
             <p style={{ opacity: 0.7, fontSize: '0.9rem', maxWidth: '700px', margin: '1.5rem auto' }}>
-              You can skip questions if they don't apply to you. Your results will include San Francisco-specific recommendations based on your highest impact areas.
+              You can skip questions if they don&apos;t apply to you. Your results will include San Francisco-specific recommendations based on your highest impact areas.
             </p>
             
             <button 
