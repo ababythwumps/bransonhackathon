@@ -235,13 +235,10 @@ const surveyQuestions = [
     ]
   },
   {
-    id: 'plastic_waste',
-    question: 'How much single-use plastic do you typically use?',
+    id: 'survey_end',
+    question: 'Ready to see your carbon footprint results?',
     options: [
-      { id: 'plastic_minimal', text: 'Minimal - I actively avoid single-use plastic', footprint: 0.2 },
-      { id: 'plastic_some', text: 'Some - I try to reduce but still use some', footprint: 0.7 },
-      { id: 'plastic_moderate', text: 'Moderate - I use single-use plastics regularly', footprint: 1.2 },
-      { id: 'plastic_high', text: 'High - I frequently use single-use plastics', footprint: 1.8 }
+      { id: 'end_survey', text: 'END SURVEY AND SEE RESULTS NOW', footprint: 0 }
     ]
   },
   
@@ -256,6 +253,7 @@ const surveyQuestions = [
       { id: 'water_high', text: 'High (long showers, frequent laundry, lawn watering)', footprint: 1.5 }
     ]
   },
+  
   // Climate Knowledge
   {
     id: 'climate_knowledge',
@@ -509,7 +507,7 @@ export default function SanFranciscoAction() {
       }
       
       // Calculate survey progress
-      const progress = Math.min((currentStep / (surveyQuestions.length - 2)) * 100, 100);
+      const progress = Math.min((currentStep / 22) * 100, 100);
       
       return (
         <div style={{ 
@@ -538,7 +536,7 @@ export default function SanFranciscoAction() {
               letterSpacing: '0.1em',
               opacity: 0.5 
             }}>
-              {currentStep} of {surveyQuestions.length}
+              {currentStep} of 22
             </div>
           </div>
           
@@ -619,6 +617,13 @@ export default function SanFranciscoAction() {
                 <button
                   key={option.id}
                   onClick={() => {
+                    // Special handling for the end survey question
+                    if (question.id === 'survey_end') {
+                      // Force calculate footprint with whatever answers we have so far
+                      calculateFootprint(answers);
+                      return;
+                    }
+                    
                     // Store answer and move to next step
                     const newAnswers = { ...answers, [question.id]: option };
                     setAnswers(newAnswers);
@@ -634,24 +639,27 @@ export default function SanFranciscoAction() {
                   }}
                   style={{
                     padding: '16px 24px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    backgroundColor: question.id === 'survey_end' ? 'rgba(120, 255, 140, 0.2)' : 'rgba(255, 255, 255, 0.05)',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
                     borderRadius: '0',
                     cursor: 'pointer',
                     textAlign: 'left',
-                    fontSize: '1rem',
+                    fontSize: question.id === 'survey_end' ? '1.2rem' : '1rem',
+                    fontWeight: question.id === 'survey_end' ? 'bold' : 200,
                     transition: 'all 0.2s ease',
                     color: 'white',
                     fontFamily: 'CaskaydiaMono, monospace',
-                    fontWeight: 200,
-                    letterSpacing: '0.03em'
+                    letterSpacing: '0.03em',
+                    textAlign: question.id === 'survey_end' ? 'center' : 'left',
+                    marginTop: question.id === 'survey_end' ? '20px' : '0',
+                    padding: question.id === 'survey_end' ? '24px' : '16px 24px'
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.backgroundColor = question.id === 'survey_end' ? 'rgba(120, 255, 140, 0.3)' : 'rgba(255, 255, 255, 0.1)';
                     e.currentTarget.style.transform = 'translateX(5px)';
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                    e.currentTarget.style.backgroundColor = question.id === 'survey_end' ? 'rgba(120, 255, 140, 0.2)' : 'rgba(255, 255, 255, 0.05)';
                     e.currentTarget.style.transform = 'translateX(0)';
                   }}
                 >
@@ -691,16 +699,7 @@ export default function SanFranciscoAction() {
             </button>
             
             <button 
-              onClick={() => {
-                // For the last two questions, directly calculate results
-                if (currentStep >= surveyQuestions.length - 2) {
-                  // Call the calculateFootprint function directly instead of reimplementing
-                  calculateFootprint(answers);
-                } else {
-                  // Otherwise just skip to next question
-                  setCurrentStep(currentStep + 1);
-                }
-              }}
+              onClick={() => setCurrentStep(currentStep + 1)}
               style={{
                 padding: '10px 20px',
                 backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -722,7 +721,7 @@ export default function SanFranciscoAction() {
                 e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
               }}
             >
-              {currentStep >= surveyQuestions.length - 2 ? "FINISH SURVEY" : "Skip Question"}
+              Skip Question
             </button>
           </div>
         </div>
@@ -1024,24 +1023,50 @@ export default function SanFranciscoAction() {
           }}>
             Carbon Footprint Survey
           </h1>
-          <Link href="/SanFrancisco">
-            <button style={{
-              padding: '10px 20px',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              color: 'white',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              borderRadius: '0',
-              cursor: 'pointer',
-              fontFamily: 'CaskaydiaMono, monospace',
-              fontWeight: 200,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-              fontSize: '0.8rem',
-              transition: 'all 0.3s ease'
-            }}>
-              Back to San Francisco
-            </button>
-          </Link>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            {currentStep > 0 && footprint === null && (
+              <button 
+                onClick={() => {
+                  // Force calculate footprint with whatever answers we have so far
+                  calculateFootprint(answers);
+                }}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: 'rgba(120, 255, 140, 0.2)',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '0',
+                  cursor: 'pointer',
+                  fontFamily: 'CaskaydiaMono, monospace',
+                  fontWeight: 200,
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                  fontSize: '0.8rem',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                See Results Now
+              </button>
+            )}
+            <Link href="/SanFrancisco">
+              <button style={{
+                padding: '10px 20px',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '0',
+                cursor: 'pointer',
+                fontFamily: 'CaskaydiaMono, monospace',
+                fontWeight: 200,
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                fontSize: '0.8rem',
+                transition: 'all 0.3s ease'
+              }}>
+                Back to San Francisco
+              </button>
+            </Link>
+          </div>
         </div>
 
         {currentStep === 0 && footprint === null && (
@@ -1061,7 +1086,7 @@ export default function SanFranciscoAction() {
               Comprehensive Carbon Footprint Assessment
             </h2>
             <p style={{ lineHeight: '1.6', maxWidth: '700px', margin: '1.5rem auto' }}>
-              This 21-question survey will analyze your lifestyle across six key areas to estimate your carbon footprint and provide personalized recommendations for reducing your environmental impact in San Francisco.
+              This 22-question survey will analyze your lifestyle across six key areas to estimate your carbon footprint and provide personalized recommendations for reducing your environmental impact in San Francisco.
             </p>
             
             <div style={{

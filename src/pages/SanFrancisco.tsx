@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import { fetchWeatherApi } from "openmeteo";
-import Link from "next/link"
+import Link from "next/link";
+import styles from "../styles/SanFrancisco.module.css";
+
 export default function SanFrancisco() {
     // State to hold weather data
     const [weatherData, setWeatherData] = useState(null);
     const [error, setError] = useState(null);
     const [sliderYear, setSliderYear] = useState(1950);
+    const [loading, setLoading] = useState(true);
 
     // Helper function to create time ranges
     const range = (start, stop, step) => Array.from({ length: Math.floor((stop - start) / step) }, (_, i) => start + i * step);
@@ -57,9 +60,11 @@ export default function SanFrancisco() {
                 };
 
                 setWeatherData(weather);
+                setLoading(false);
             } catch (err) {
                 console.error("Error fetching weather data:", err);
                 setError("Failed to load weather data.");
+                setLoading(false);
             }
         }
 
@@ -67,7 +72,7 @@ export default function SanFrancisco() {
     }, []);
 
     // Handle slider change
-    let yearIndex = 0
+    let yearIndex = 0;
     const handleSliderChange = (event) => {
         const year = parseInt(event.target.value);
         setSliderYear(year);
@@ -84,68 +89,108 @@ export default function SanFrancisco() {
         }
     };
 
+    // Function to determine temperature-based color
+    const getTemperatureColor = (temp) => {
+        if (!temp) return '#FFFFFF';
+        if (temp > 90) return '#FF3D00';
+        if (temp > 80) return '#FF9100';
+        if (temp > 70) return '#FFEA00';
+        if (temp > 60) return '#76FF03';
+        if (temp > 50) return '#00E5FF';
+        return '#2979FF';
+    };
+
+    // Calculate the temperature and precipitation for the current year
+    const currentTemp = weatherData?.daily?.temperature2mMax[yearIndex];
+    const currentPrecip = weatherData?.daily?.precipitation_sum[yearIndex];
+    const tempColor = getTemperatureColor(currentTemp);
+
     return (
-        <>
+        <div className={styles.container}>
             <Head>
-                <title>SAN FRANCISCO, CA, USA</title>
+                <title>San Francisco Climate Forecast</title>
+                <meta name="description" content="San Francisco climate projection through 2050" />
             </Head>
-            <main>
-                <h1>SAN FRANCISCO, CA, USA</h1>
+            
+            <header className={styles.header}>
+                <h1>SAN FRANCISCO, CA</h1>
+                <p className={styles.subtitle}>Climate Projection through 2050</p>
+            </header>
 
-                <div>
-                    <input
-                        type="range"
-                        min="1950"
-                        max="2050"
-                        value={sliderYear}
-                        onChange={handleSliderChange}
-                        className="slider"
+            <main className={styles.main}>
+                <div className={styles.cityImageContainer}>
+                    <div 
+                        className={styles.cityImage} 
+                        style={{ 
+                            backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('/sf-skyline.jpg')`
+                        }}
                     />
-                    <div>Current Year: {sliderYear}</div>
                 </div>
+                
+                <section className={styles.dataSection}>
+                    <div className={styles.sliderContainer}>
+                        <h3>Move the slider to see climate projections by year</h3>
+                        <div className={styles.sliderWrapper}>
+                            <span>1950</span>
+                            <input
+                                type="range"
+                                min="1950"
+                                max="2050"
+                                value={sliderYear}
+                                onChange={handleSliderChange}
+                                className={styles.yearSlider}
+                            />
+                            <span>2050</span>
+                        </div>
+                        <div className={styles.currentYear}>
+                            <span>Current Year: </span>
+                            <span className={styles.yearValue}>{sliderYear}</span>
+                        </div>
+                    </div>
 
-                {error && <p style={{color: "red"}}>{error}</p>}
-                {weatherData ? (
-                    <div>
-                        {weatherData.daily.time.length > 0 ? (
-                            <div>
-                                <div id="temperature">
-                                    {/*<strong>{weatherData.daily.time[0].toISOString()}</strong>:{" "}*/}
-                                    {weatherData.daily.temperature2mMax[yearIndex]}
-                                </div>
-
-                                <div id="precipitation">
-                                    {weatherData.daily.precipitation_sum[yearIndex]}
+                    {error && <p className={styles.error}>{error}</p>}
+                    
+                    {loading ? (
+                        <div className={styles.loading}>
+                            <p>Loading climate data...</p>
+                            <div className={styles.spinner}></div>
+                        </div>
+                    ) : weatherData ? (
+                        <div className={styles.weatherDisplay}>
+                            <div className={styles.weatherCard} style={{ borderColor: tempColor }}>
+                                <h2>Maximum Temperature</h2>
+                                <div className={styles.dataValue} style={{ color: tempColor }}>
+                                    <span id="temperature">
+                                        {Math.round(currentTemp * 10) / 10}
+                                    </span>
+                                    <span className={styles.unit}>°F</span>
                                 </div>
                             </div>
-                        ) : (
-                            <p>No weather data available</p>
-                        )}
-                    </div>
-                ) : (
-                    <p>Loading weather data...</p>
-                )}
+
+                            <div className={styles.weatherCard}>
+                                <h2>Precipitation</h2>
+                                <div className={styles.dataValue}>
+                                    <span id="precipitation">
+                                        {currentPrecip}
+                                    </span>
+                                    <span className={styles.unit}>in</span>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className={styles.noData}>No weather data available</p>
+                    )}
+                </section>
                 
-                <div style={{ marginTop: "2rem" }}>
+                <div className={styles.actionSection}>
+                    <p>See how our actions today can impact San Francisco's climate future.</p>
                     <Link href="/takeaction">
-                        <button
-                            style={{
-                                padding: "0.75rem 1.5rem",
-                                backgroundColor: "#4CAF50",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                fontSize: "1rem",
-                                cursor: "pointer",
-                                fontWeight: "bold",
-                                boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
-                            }}
-                        >
+                        <button className={styles.actionButton}>
                             Take Action Now
                         </button>
                     </Link>
                 </div>
             </main>
-        </>
+        </div>
     );
 }
