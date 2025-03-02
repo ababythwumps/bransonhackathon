@@ -126,6 +126,26 @@ export default function SanFrancisco() {
                 ) : (
                     <p>Loading weather data...</p>
                 )}
+                
+                <div style={{ marginTop: "2rem" }}>
+                    <Link href="/takeaction">
+                        <button
+                            style={{
+                                padding: "0.75rem 1.5rem",
+                                backgroundColor: "#4CAF50",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                fontSize: "1rem",
+                                cursor: "pointer",
+                                fontWeight: "bold",
+                                boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
+                            }}
+                        >
+                            Take Action Now
+                        </button>
+                    </Link>
+                </div>
             </main>
         </>
     );
