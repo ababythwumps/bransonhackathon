@@ -23,9 +23,9 @@ import { useRouter } from 'next/router';
 
 // City coordinates - adding extra info for debugging
 const LOCATIONS = [
-  { id: 'sf', name: 'San Francisco', lat: 37.7749, lng: -122.4194, url: '/sanfrancisco' },
-  { id: 'ny', name: 'New York', lat: 40.7128, lng: -74.0060, url: '/newyork' },
-  { id: 'chi', name: 'Chicago', lat: 41.8781, lng: -87.6298, url: '/chicago' }
+  { id: 'sf', name: 'San Francisco', lat: 37.7749, lng: -122.4194, url: '/SanFrancisco' },
+  { id: 'ny', name: 'New York', lat: 40.7128, lng: -74.0060, url: '/NewYork' },
+  { id: 'chi', name: 'Chicago', lat: 41.8781, lng: -87.6298, url: '/Chicago' }
 ];
 
 const Globe = () => {
